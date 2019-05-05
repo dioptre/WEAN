@@ -1,5 +1,5 @@
 import math
-from textstat import syllable_count
+from textstat import syllable_count, dale_chall_readability_score
 
 # The Flesch Reading Ease Readability Formula 
 # http://www.readabilityformulas.com/flesch-reading-ease-readability-formula.php
@@ -17,6 +17,9 @@ from textstat import syllable_count
 # • Scores between 0.0 and 30.0 are considered easily understood by college graduates.
 
 def calc_complexity_scores(input_sentences):
+
+    return calc_complexity_scores_dale_chall(input_sentences)
+
     complexity_scores = []
 
     for sentence in input_sentences:
@@ -30,17 +33,27 @@ def calc_complexity_scores(input_sentences):
 
     return complexity_scores
 
-sentences = ["genetic engineering has expanded the genes available to breeders to utilize in creating desired germlines for new crops .",
-"the print collections are further supported by extensive microform holdings ."]
+def calc_complexity_scores_dale_chall(input_sentences):
+    complexity_scores = []
 
-scores = calc_complexity_scores(sentences)
-print(scores)
+    for sentence in input_sentences:
+        score = dale_chall_readability_score(sentence)
+        complexity_scores.append(score)
 
-sentences = ["genetic engineering has expanded the genes for new crops .",
-"the print collections are further supported by big microform holdings ."]
+    return complexity_scores
 
-scores = calc_complexity_scores(sentences)
-print(scores)
+
+# sentences = ["genetic engineering has expanded the genes available to breeders to utilize in creating desired germlines for new crops .",
+# "the print collections are further supported by extensive microform holdings ."]
+
+# scores = calc_complexity_scores_dale_chall(sentences)
+# print(scores)
+
+# sentences = ["genetic engineering has expanded the genes for new crops .",
+# "the print collections are further supported by big microform holdings ."]
+
+# scores = calc_complexity_scores_dale_chall(sentences)
+# print(scores)
 
 
 
