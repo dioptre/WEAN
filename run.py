@@ -234,7 +234,7 @@ def predict():
 if __name__ == '__main__':
     if opt.mode == 'train':
         train()
-    else if opt.mode == 'evaluate':
+    elif opt.mode == 'evaluate':
         evaluate()
     else :
         predict()
