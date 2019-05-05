@@ -196,10 +196,46 @@ def evaluate():
     
     predictor.evaluate(model)
 
+def predict():
+    reader = PWKPReader()
+    vocab = Vocabulary.from_files(vocab_dir)
+    iterator = BasicIterator(batch_size=opt.batch_size)
+    iterator.index_with(vocab)
+
+    model = Seq2Seq(emb_size=opt.emb_size,
+                    hidden_size=opt.hidden_size,
+                    enc_layers = opt.enc_layers,
+                    dec_layers = opt.dec_layers,
+                    dropout=opt.dropout,
+                    bidirectional=opt.bidirectional,
+                    beam_size=opt.beam_size,
+                    label_smoothing=opt.label_smoothing,
+                    vocab=vocab)
+
+    model = model.cuda(opt.gpu)
+    model_state = torch.load(opt.restore, map_location=util.device_mapping(-1))
+    model.load_state_dict(model_state)
+
+    predictor = Predictor(iterator=iterator,
+                          max_decoding_step=opt.max_step,
+                          vocab=vocab,
+                          reader=reader,
+                          data_path=test_path,
+                          log_dir=save_dir,
+                          map_path=ner_path,
+                          cuda_device=opt.gpu)
+    
+    predictions = predictor.predict(model)
+
+    print(predictions)
+
 
 
 if __name__ == '__main__':
     if opt.mode == 'train':
         train()
-    else:
+    else if opt.mode == 'evaluate':
         evaluate()
+    else :
+        predict()
+        
