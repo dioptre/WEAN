@@ -32,7 +32,7 @@ parser.add_argument('-dec_layers', type=int, default=2, help="Number of decoder 
 parser.add_argument('-batch_size', type=int, default=64, help="Batch size")
 parser.add_argument('-beam_size', type=int, default=10, help="Beam size")
 parser.add_argument('-vocab_size', type=int, default=50000, help="Vocabulary size")
-parser.add_argument('-epoch', type=int, default=100, help="Number of epoch")
+parser.add_argument('-epoch', type=int, default=1, help="Number of epoch")
 parser.add_argument('-report', type=int, default=500, help="Number of report interval")
 parser.add_argument('-lr', type=float, default=1e-3, help="Learning rate")
 parser.add_argument('-lr_decay', type=float, default=1.0, help="Learning rate Decay")
