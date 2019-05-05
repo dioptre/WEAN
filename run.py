@@ -53,7 +53,7 @@ torch.manual_seed(1234)
 torch.cuda.manual_seed(1234)
 torch.cuda.set_device(opt.gpu)
 
-data_path = os.path.expanduser('/data/data-simplification/wikismall/')
+data_path = os.path.expanduser('./preprocess/data/data-simplification/wikismall/')
 
 train_path, dev_path = os.path.join(data_path, 'train.jsonl'), os.path.join(data_path, 'dev.jsonl')
 test_path = os.path.join(data_path, 'test.jsonl')
