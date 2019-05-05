@@ -103,6 +103,21 @@ class PWKPReader(DatasetReader):
                 pairs = json.loads(line)
                 yield pairs
 
+    def read_sentence(self, sentence: str) ->Iterator[Instance]:
+        target = 'Hello'
+
+        src, tgt = sentence.split(' '), target.split(' ')
+
+        if opt.max_len > 0:
+            src = src[:opt.max_len]
+            tgt = tgt[:opt.max_len]
+        tgt = ['@@BOS@@'] + tgt + ['@@EOS@@']
+        src = [Token(word) for word in src]
+        tgt = [Token(word) for word in tgt]
+        yield self.text_to_instance(src, tgt)
+
+
+
 
 
 def train():
@@ -225,11 +240,9 @@ def predict():
                           map_path=ner_path,
                           cuda_device=opt.gpu)
     
-    predictions = predictor.predict(model)
+    predictions = predictor.predict(model, "it the second episode , aang was shown to be the current incarnation of the avatar , the spirit of the planet as a human .")
 
     print(predictions)
-
-
 
 if __name__ == '__main__':
     if opt.mode == 'train':

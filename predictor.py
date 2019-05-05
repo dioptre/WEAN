@@ -94,51 +94,50 @@ class Predictor(Registrable):
 
         return score
 
-    def predict(self, model: Model, pred_dataset = None):
-        pred_dataset = self.dataset
+    def predict(self, model: Model, pred_sentence):
+        pred_dataset = self.reader.read_sentence(pred_sentence) 
 
+        val_generator = self.iterator(pred_dataset,
+                                      num_epochs=1,
+                                      shuffle=False)
+        num_validation_batches = self.iterator.get_num_batches(pred_dataset)
+        val_generator_tqdm = Tqdm.tqdm(val_generator, total=num_validation_batches)
 
-        # val_generator = self.iterator(pred_dataset,
-        #                               num_epochs=1,
-        #                               shuffle=False)
-        # num_validation_batches = self.iterator.get_num_batches(pred_dataset)
-        # val_generator_tqdm = Tqdm.tqdm(val_generator, total=num_validation_batches)
+        vocabulary = self.vocab.get_index_to_token_vocabulary('tokens')
 
-        # vocabulary = self.vocab.get_index_to_token_vocabulary('tokens')
-
-        # predictions, sources, references, alignments = [], [], [], []
+        predictions, sources, references, alignments = [], [], [], []
         
-        # for data in self.reader.read_raw(self.data_path):
-        #     sources.append(data['source'])
-        #     references.append(data['target'])
+        for data in self.reader.read_raw(self.data_path):
+            sources.append(data['source'])
+            references.append(data['target'])
 
-        # for batch in val_generator_tqdm:
-        #     batch = util.move_to_device(batch, self.cuda_device)
+        for batch in val_generator_tqdm:
+            batch = util.move_to_device(batch, self.cuda_device)
 
-        #     output_dict = model.predict(batch['src'], max_decoding_step=self.max_decoding_step)
-        #     alignments += output_dict['alignments']
+            output_dict = model.predict(batch['src'], max_decoding_step=self.max_decoding_step)
+            alignments += output_dict['alignments']
 
-        #     for pred in output_dict['output_ids']:
-        #         pred_sent = list(map(vocabulary.get, pred))
-        #         if '@@EOS@@' in pred_sent:
-        #             pred_sent = pred_sent[:pred_sent.index('@@EOS@@')]
-        #         pred_sent = ' '.join(pred_sent)
-        #         predictions.append(pred_sent)
+            for pred in output_dict['output_ids']:
+                pred_sent = list(map(vocabulary.get, pred))
+                if '@@EOS@@' in pred_sent:
+                    pred_sent = pred_sent[:pred_sent.index('@@EOS@@')]
+                pred_sent = ' '.join(pred_sent)
+                predictions.append(pred_sent)
         
-        # for i in range(len(predictions)):
-        #     source_sent = sources[i].split(' ')
-        #     pred_sent = predictions[i].split(' ')
-        #     for j in range(len(pred_sent)):
-        #         if pred_sent[j] == '@@UNKNOWN@@' and alignments[i][j] < len(source_sent):
-        #             pred_sent[j] = source_sent[alignments[i][j]]
-        #     predictions[i] = ' '.join(pred_sent)
+        for i in range(len(predictions)):
+            source_sent = sources[i].split(' ')
+            pred_sent = predictions[i].split(' ')
+            for j in range(len(pred_sent)):
+                if pred_sent[j] == '@@UNKNOWN@@' and alignments[i][j] < len(source_sent):
+                    pred_sent[j] = source_sent[alignments[i][j]]
+            predictions[i] = ' '.join(pred_sent)
 
-        # if self.post_map is not None:
-        #     predictions = [self.post_processs(p, m) for p, m in zip(predictions, self.post_map)]
-        #     references = [self.post_processs(r, m) for r, m in zip(references, self.post_map)]
+        if self.post_map is not None:
+            predictions = [self.post_processs(p, m) for p, m in zip(predictions, self.post_map)]
+            references = [self.post_processs(r, m) for r, m in zip(references, self.post_map)]
 
-        # score = {}
-        # score['bleu'] = calc_bleu_score(predictions, references, sources, self.log_dir)
-        # model.train()
+        score = {}
+        score['bleu'] = calc_bleu_score(predictions, references, sources, self.log_dir)
+        model.train()
 
-        # return predictions
+        return predictions
