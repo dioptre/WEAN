@@ -240,7 +240,9 @@ def predict():
                           map_path=ner_path,
                           cuda_device=opt.gpu)
     
-    predictions = predictor.predict(model, "it the second episode , aang was shown to be the current incarnation of the avatar , the spirit of the planet as a human .")
+    sent = input("Please enter a sentence :")
+
+    predictions = predictor.predict(model, sent)
 
     print(predictions)
 

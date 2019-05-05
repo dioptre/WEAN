@@ -136,8 +136,4 @@ class Predictor(Registrable):
             predictions = [self.post_processs(p, m) for p, m in zip(predictions, self.post_map)]
             references = [self.post_processs(r, m) for r, m in zip(references, self.post_map)]
 
-        score = {}
-        score['bleu'] = calc_bleu_score(predictions, references, sources, self.log_dir)
-        model.train()
-
         return predictions
