@@ -24,6 +24,8 @@ from metrics import SequenceAccuracy, calc_bleu_score
 from models.seq2seq import Seq2Seq
 from predictor import Predictor
 
+from metrics import complexity
+
 parser = argparse.ArgumentParser(description='train.py')
 parser.add_argument('-emb_size', type=int, default=256, help="Embedding size")
 parser.add_argument('-hidden_size', type=int, default=256, help="Hidden size")
@@ -242,9 +244,17 @@ def predict():
     
     sent = input("Please enter a sentence :")
 
+    complexity_input = complexity.calc_complexity_scores([sent])
+
     predictions = predictor.predict(model, sent)
 
-    print(predictions)
+    print('\nPredicted Paraphrase : ')
+    print(predictions[0])
+
+    complexity_output = complexity.calc_complexity_scores(predictions)
+
+    print("\nThe complexity score for input sentence is : \t {:0.2f}".format(complexity_input[0]))
+    print("\nThe complexity score for generated sentence is : \t {:0.2f}".format(complexity_output[0]))
 
 if __name__ == '__main__':
     if opt.mode == 'train':
