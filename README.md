@@ -25,14 +25,14 @@ python3 run.py -gpu 0 -mode train -dir save_path
 ```
 
 ## Evaluate
-- Step 1: Download the pretrained model, best.th from [here]()
+- Step 1: Download the pretrained model, best.th from [here](https://drive.google.com/file/d/1pH5OG5-gXFtmnD4Rt_iUjaW5R6L_0IDX/view?usp=sharing)
 - Step 2: Restore and evaluate the model with the BLEU metric
 ```bash
 python3 run.py -gpu 0 -mode evaluate -restore path_to_model/best.th
 ```
 
 ## Predict
-- Step 1: Download the pretrained model, best.th from [here]()
+- Step 1: Download the pretrained model, best.th from [here](https://drive.google.com/file/d/1pH5OG5-gXFtmnD4Rt_iUjaW5R6L_0IDX/view?usp=sharing)
 - Step 2: Restore and predict a paraphrase for a sentence
 ```bash
 python3 run.py -gpu 0 -mode predict -restore path_to_model/best.th
