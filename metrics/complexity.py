@@ -1,5 +1,6 @@
 import math
-from textstat import syllable_count, dale_chall_readability_score
+from textstat import syllable_count, dale_chall_readability_score, gunning_fog
+import numpy as np
 
 # The Flesch Reading Ease Readability Formula 
 # http://www.readabilityformulas.com/flesch-reading-ease-readability-formula.php
@@ -18,7 +19,7 @@ from textstat import syllable_count, dale_chall_readability_score
 
 def calc_complexity_scores(input_sentences):
 
-    return calc_complexity_scores_dale_chall(input_sentences)
+    # return calc_complexity_scores_dale_chall(input_sentences)
 
     complexity_scores = []
 
@@ -42,19 +43,27 @@ def calc_complexity_scores_dale_chall(input_sentences):
 
     return complexity_scores
 
+def calc_complexity_scores_gunning_fog(input_sentences):
+    complexity_scores = []
 
-# sentences = ["genetic engineering has expanded the genes available to breeders to utilize in creating desired germlines for new crops .",
-# "the print collections are further supported by extensive microform holdings ."]
+    for sentence in input_sentences:
+        score = gunning_fog(sentence)
+        complexity_scores.append(score)
 
-# scores = calc_complexity_scores_dale_chall(sentences)
-# print(scores)
+    return complexity_scores
 
-# sentences = ["genetic engineering has expanded the genes for new crops .",
-# "the print collections are further supported by big microform holdings ."]
 
-# scores = calc_complexity_scores_dale_chall(sentences)
-# print(scores)
+# sentences = []
 
+# f = open("output_saved_wikialigned/pred.txt", "r")
+# for s in f:
+#   sentences.append(s)
+
+# scores = calc_complexity_scores(sentences)
+# scores = np.array(scores)
+# avg_score = np.mean(scores)
+
+# print(avg_score)
 
 
 
