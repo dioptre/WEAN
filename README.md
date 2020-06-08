@@ -2,6 +2,21 @@
 
 Code for "Word Embedding Attention Network: Generating Words by Querying Distributed Word Representations for Paraphrase Generation" [[pdf]](https://arxiv.org/abs/1803.01465)
 
+## Why I wouldn't use this work 
+
+Quoted from the work:
+```
+Depending on the context, another closely-related meaningof constituent is that of acitizen residing in the area governed, represented, or otherwise served by a politician;sometimes this is restricted to citizens who elected the politician.
+```
+Supposedly becomes this:
+```
+Depending on the context, another closely-related meaningof constituent is that of acitizenwho livesin the area governed, represented, or otherwise served by a politician;sometimesthe wordis restricted to citizens who elected the politician.
+```
+Instead we see this from the reference (pwkp.th) model:
+```
+it is the restricted of the power constituent .
+```
+
 ## Requirements
 
 * Ubuntu 16.04
