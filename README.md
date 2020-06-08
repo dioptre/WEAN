@@ -27,6 +27,9 @@ sudo make altinstall
 python3.6
 ```
 * Pytorch 1.0.0
+```
+sudo pip3.6 install https://download.pytorch.org/whl/cu100/torch-1.0.1.post2-cp36-cp36m-linux_x86_64.whl
+```
 * allennlp 0.7.2
 * torchfile
 ```
