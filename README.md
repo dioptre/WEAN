@@ -27,16 +27,23 @@ sudo make altinstall
 python3.6
 ```
 * Pytorch 1.0.0
-```
-sudo pip3.6 install https://download.pytorch.org/whl/cu100/torch-1.0.1.post2-cp36-cp36m-linux_x86_64.whl
-```
 * allennlp 0.7.2
 * torchfile
 ```
 pip3 install -r requirements.txt
+#Use a different torch requirement if you aren't using AWS and CUDA 10
 ```
 
-## Data Preparation
+## Predict
+- Step 1: Download the pretrained model, best.th from [here](https://drive.google.com/file/d/1pH5OG5-gXFtmnD4Rt_iUjaW5R6L_0IDX/view?usp=sharing)
+- Step 2: Restore and predict a paraphrase for a sentence
+```bash
+python3 run.py -gpu 0 -mode predict -restore path_to_model/best.th
+```
+
+## Optional
+
+### Data Preparation
 
 - Step 1: Download the [PWKP dataset](https://github.com/XingxingZhang/dress) and put it in the folder *data/*.
 - Step 2: Preprocess the dataset
@@ -45,21 +52,14 @@ cd preprocess/
 python3 process_pkwp.py
 ```
 
-## Train
+### Train
 ```bash
 python3 run.py -gpu 0 -mode train -dir save_path
 ```
 
-## Evaluate
+### Evaluate
 - Step 1: Download the pretrained model, best.th from [here](https://drive.google.com/file/d/1pH5OG5-gXFtmnD4Rt_iUjaW5R6L_0IDX/view?usp=sharing)
 - Step 2: Restore and evaluate the model with the BLEU metric
 ```bash
 python3 run.py -gpu 0 -mode evaluate -restore path_to_model/best.th
-```
-
-## Predict
-- Step 1: Download the pretrained model, best.th from [here](https://drive.google.com/file/d/1pH5OG5-gXFtmnD4Rt_iUjaW5R6L_0IDX/view?usp=sharing)
-- Step 2: Restore and predict a paraphrase for a sentence
-```bash
-python3 run.py -gpu 0 -mode predict -restore path_to_model/best.th
 ```
