@@ -6,6 +6,23 @@ Code for "Word Embedding Attention Network: Generating Words by Querying Distrib
 
 * Ubuntu 16.04
 * Python 3.6
+Install pre-requisites:
+```
+sudo apt-get install -y make build-essential libssl-dev zlib1g-dev libbz2-dev \
+libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev \
+xz-utils tk-dev libffi-dev liblzma-dev
+sudo apt install libedit-dev
+```
+Then:
+```
+wget https://www.python.org/ftp/python/3.6.9/Python-3.6.9.tgz
+tar xvf Python-3.6.9.tgz
+cd Python-3.6.9
+./configure --enable-optimizations --enable-shared
+make -j8
+sudo make altinstall
+python3.6
+```
 * Pytorch 1.0.0
 * allennlp 0.7.2
 * torchfile
