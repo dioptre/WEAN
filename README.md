@@ -30,7 +30,7 @@ python3.6
 * allennlp 0.7.2
 * torchfile
 ```
-pip3 install -r requirements.txt
+pip3.6 install -r requirements.txt
 #Use a different torch requirement if you aren't using AWS and CUDA 10
 ```
 
@@ -38,7 +38,7 @@ pip3 install -r requirements.txt
 - Step 1: Download the pretrained model, best.th from [here](https://drive.google.com/file/d/1pH5OG5-gXFtmnD4Rt_iUjaW5R6L_0IDX/view?usp=sharing)
 - Step 2: Restore and predict a paraphrase for a sentence
 ```bash
-python3 run.py -gpu 0 -mode predict -restore path_to_model/best.th
+python3.6 run.py -gpu 0 -mode predict -restore best.th #or pwkp.th
 ```
 
 ## Optional
