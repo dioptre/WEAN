@@ -23,9 +23,11 @@ from torch.nn.parallel import replicate, parallel_apply
 from torch.nn.parallel.scatter_gather import gather
 from tensorboardX import SummaryWriter
 
+from torch.nn.parallel.scatter_gather import scatter_kwargs
+
 from allennlp.common import Params, Registrable
 from allennlp.common.checks import ConfigurationError
-from allennlp.common.util import dump_metrics, gpu_memory_mb, parse_cuda_device, peak_memory_mb, scatter_kwargs
+from allennlp.common.util import dump_metrics, gpu_memory_mb, parse_cuda_device, peak_memory_mb#, scatter_kwargs
 from allennlp.common.tqdm import Tqdm
 from allennlp.data.instance import Instance
 from allennlp.data.iterators.data_iterator import DataIterator

@@ -24,6 +24,8 @@ from metrics import SequenceAccuracy, calc_bleu_score
 from models.seq2seq import Seq2Seq
 from predictor import Predictor
 
+from metrics import complexity
+
 parser = argparse.ArgumentParser(description='train.py')
 parser.add_argument('-emb_size', type=int, default=256, help="Embedding size")
 parser.add_argument('-hidden_size', type=int, default=256, help="Hidden size")
@@ -32,7 +34,7 @@ parser.add_argument('-dec_layers', type=int, default=2, help="Number of decoder 
 parser.add_argument('-batch_size', type=int, default=64, help="Batch size")
 parser.add_argument('-beam_size', type=int, default=10, help="Beam size")
 parser.add_argument('-vocab_size', type=int, default=50000, help="Vocabulary size")
-parser.add_argument('-epoch', type=int, default=100, help="Number of epoch")
+parser.add_argument('-epoch', type=int, default=1, help="Number of epoch")
 parser.add_argument('-report', type=int, default=500, help="Number of report interval")
 parser.add_argument('-lr', type=float, default=1e-3, help="Learning rate")
 parser.add_argument('-lr_decay', type=float, default=1.0, help="Learning rate Decay")
@@ -53,7 +55,7 @@ torch.manual_seed(1234)
 torch.cuda.manual_seed(1234)
 torch.cuda.set_device(opt.gpu)
 
-data_path = os.path.expanduser('/data/data-simplification/wikismall/')
+data_path = os.path.expanduser('./preprocess/data/data-simplification/wikismall/')
 
 train_path, dev_path = os.path.join(data_path, 'train.jsonl'), os.path.join(data_path, 'dev.jsonl')
 test_path = os.path.join(data_path, 'test.jsonl')
@@ -102,6 +104,21 @@ class PWKPReader(DatasetReader):
             for line in f:
                 pairs = json.loads(line)
                 yield pairs
+
+    def read_sentence(self, sentence: str) ->Iterator[Instance]:
+        target = 'Hello'
+
+        src, tgt = sentence.split(' '), target.split(' ')
+
+        if opt.max_len > 0:
+            src = src[:opt.max_len]
+            tgt = tgt[:opt.max_len]
+        tgt = ['@@BOS@@'] + tgt + ['@@EOS@@']
+        src = [Token(word) for word in src]
+        tgt = [Token(word) for word in tgt]
+        yield self.text_to_instance(src, tgt)
+
+
 
 
 
@@ -196,10 +213,54 @@ def evaluate():
     
     predictor.evaluate(model)
 
+def predict():
+    reader = PWKPReader()
+    vocab = Vocabulary.from_files(vocab_dir)
+    iterator = BasicIterator(batch_size=opt.batch_size)
+    iterator.index_with(vocab)
 
+    model = Seq2Seq(emb_size=opt.emb_size,
+                    hidden_size=opt.hidden_size,
+                    enc_layers = opt.enc_layers,
+                    dec_layers = opt.dec_layers,
+                    dropout=opt.dropout,
+                    bidirectional=opt.bidirectional,
+                    beam_size=opt.beam_size,
+                    label_smoothing=opt.label_smoothing,
+                    vocab=vocab)
+
+    model = model.cuda(opt.gpu)
+    model_state = torch.load(opt.restore, map_location=util.device_mapping(-1))
+    model.load_state_dict(model_state)
+
+    predictor = Predictor(iterator=iterator,
+                          max_decoding_step=opt.max_step,
+                          vocab=vocab,
+                          reader=reader,
+                          data_path=test_path,
+                          log_dir=save_dir,
+                          map_path=ner_path,
+                          cuda_device=opt.gpu)
+    
+    sent = input("Please enter a sentence :")
+
+    complexity_input = complexity.calc_complexity_scores([sent])
+
+    predictions = predictor.predict(model, sent)
+
+    print('\nPredicted Paraphrase : ')
+    print(predictions[0])
+
+    complexity_output = complexity.calc_complexity_scores(predictions)
+
+    print("\nThe complexity score for input sentence is : \t {:0.2f}".format(complexity_input[0]))
+    print("\nThe complexity score for generated sentence is : \t {:0.2f}".format(complexity_output[0]))
 
 if __name__ == '__main__':
     if opt.mode == 'train':
         train()
-    else:
+    elif opt.mode == 'evaluate':
         evaluate()
+    else :
+        predict()
+        
